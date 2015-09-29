@@ -39,6 +39,7 @@ public class MainWindow extends JFrame {
     
     private void addMenu() {
     	mainMenu = new MainMenu(statusBar);
+    	//mainMenu.addStatusChangeListener(statusBar);
     	setJMenuBar(mainMenu);
     }
     
