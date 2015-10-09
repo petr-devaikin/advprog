@@ -3,6 +3,7 @@ package PhotoViewerPackage;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.List;
@@ -23,6 +24,7 @@ public class PhotoComponent extends JComponent {
 	private boolean isMousePressed = false;
 	private boolean isDrawing = false;
 	private PhotoStroke currentStroke = new PhotoStroke();
+	private Font font = new Font("Arial", Font.PLAIN, 12);
 	
 	private ArrayList<PhotoNote> notes = new ArrayList<PhotoNote>();
 	private ArrayList<PhotoStroke> strokes = new ArrayList<PhotoStroke>();
@@ -129,10 +131,22 @@ public class PhotoComponent extends JComponent {
 	}
 	
 	private void drawNotes(Graphics g) {
+		FontMetrics metrics = g.getFontMetrics(font);
+	
 		for (PhotoNote note : notes) {
 			g.setColor(Color.BLACK);
-			g.setFont(new Font("Arial", Font.PLAIN, 12));
-			g.drawString(note.text, note.position.x, note.position.y);
+			g.setFont(font);
+			String text = note.text;
+			int x = note.position.x;
+			int y = note.position.y;
+			/*
+			if (note.position.x + metrics.stringWidth(note.text) > getWidth()) {
+				System.out.println(note.text.substring(0, note.text.length() - 1));
+				note.text = note.text.substring(0, note.text.length() - 1) + "\n" + 
+						note.text.substring(note.text.length() - 1, note.text.length());
+			}
+			*/
+			g.drawString(text, x, y);
 		}
 	}
 	
