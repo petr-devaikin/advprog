@@ -2,6 +2,7 @@ package PhotoViewerPackage;
 
 import java.util.Vector;
 
+/*
 public abstract class StatusChanger {
 	private Vector statusChangeListeners;
 	
@@ -11,14 +12,12 @@ public abstract class StatusChanger {
 	    statusChangeListeners.addElement(l);
 	  }  
 
-	  /** Remove a listener for SunEvents */
 	  synchronized public void removeSunListener(SunListener l) {
 	    if (listeners == null)
 	      listeners = new Vector();
 	    listeners.removeElement(l);
 	  }
 
-	  /** Fire a SunEvent to all registered listeners */
 	  protected void fireSunMoved(boolean rose) {
 	    // if we have no listeners, do nothing...
 	    if (listeners != null && !listeners.isEmpty()) {
@@ -43,3 +42,4 @@ public abstract class StatusChanger {
 	    }
 	  }
 }
+*/
