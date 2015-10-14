@@ -11,7 +11,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 
 public class MainMenu extends JMenuBar {
-	public MainMenu(StatusBar statusBar) {
+	public MainMenu(StatusBar statusBar, MainPanel mainPanel) {
 		super();
 		
         JMenu file = new JMenu("File");
@@ -22,7 +22,9 @@ public class MainMenu extends JMenuBar {
             public void actionPerformed(ActionEvent event) {
             	JFileChooser chooser = new JFileChooser();
                 int returnVal = chooser.showOpenDialog(null);
-                statusBar.setStatus("Photo imported");
+                if (returnVal == 0 && mainPanel.addPhoto(chooser.getSelectedFile().getAbsolutePath()))
+                    statusBar.setStatus("Photo imported");
+                	
             }
         });
         file.add(importItem);
@@ -31,7 +33,8 @@ public class MainMenu extends JMenuBar {
         deleteItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                statusBar.setStatus("Photo deleted");
+                if (mainPanel.deletePhoto())
+                    statusBar.setStatus("Photo deleted");
             }
         });
         file.add(deleteItem);

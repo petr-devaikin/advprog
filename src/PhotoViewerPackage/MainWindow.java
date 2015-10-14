@@ -29,16 +29,16 @@ public class MainWindow extends JFrame {
     private void initUI() {
         setLayout(new BorderLayout());
 
+    	addMainPanel();
     	addStatusbar();
     	addMenu();
     	addToolbar();
-    	addMainPanel();
     	
         setTitle("Photo Viewer");
     }
     
     private void addMenu() {
-    	mainMenu = new MainMenu(statusBar);
+    	mainMenu = new MainMenu(statusBar, mainPanel);
     	//mainMenu.addStatusChangeListener(statusBar);
     	setJMenuBar(mainMenu);
     }
