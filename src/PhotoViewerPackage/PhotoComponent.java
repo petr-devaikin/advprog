@@ -1,5 +1,6 @@
 package PhotoViewerPackage;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -11,6 +12,7 @@ import java.awt.List;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Stroke;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -37,10 +39,9 @@ public class PhotoComponent extends JComponent {
 	private boolean isFlipped = false;
 	private boolean isMousePressed = false;
 	private boolean isDrawing = false;
-	private Font font = new Font("Arial", Font.PLAIN, 12);
 	
 	private ArrayList<PhotoNote> notes = new ArrayList<PhotoNote>();
-	private PhotoNote currentNote = new PhotoNote(new Point(0, 0));
+	private PhotoNote currentNote = null;
 	private ArrayList<PhotoStroke> strokes = new ArrayList<PhotoStroke>();
 	private PhotoStroke currentStroke = new PhotoStroke();
 	
@@ -50,8 +51,6 @@ public class PhotoComponent extends JComponent {
 		super();
 		
 		this.image = image;
-		
-		notes.add(currentNote);
 		
 		addMouseListener(new MouseListener() {
 			@Override
@@ -79,22 +78,32 @@ public class PhotoComponent extends JComponent {
                 		requestFocus(true);
                 		Point imagePosition = getImagePosition();
                 		
-                		PhotoNote pointedNote = null;
+                		PhotoNote selectedNote = null;
                 		for (PhotoNote note : notes) {
-                			if (note.position.x <= e.getPoint().x - imagePosition.x &&
-            					note.position.y <= e.getPoint().y - imagePosition.y &&
-            					note.position.x + note.size.width > e.getPoint().x - imagePosition.x &&
-            					note.position.y + note.size.height > e.getPoint().y - imagePosition.y)
+                			if (note.position.x - 5 <= e.getPoint().x - imagePosition.x &&
+            					note.position.y - 5 <= e.getPoint().y - imagePosition.y &&
+            					note.position.x + 5 + note.size.width > e.getPoint().x - imagePosition.x &&
+            					note.position.y + 5 + note.size.height > e.getPoint().y - imagePosition.y) {
+                				
+                				selectedNote = note;
+                				break;
+                			}
                 		}
+
+        				if (currentNote != selectedNote && currentNote != null &&
+        						currentNote.text.length() == 0) {
+            				notes.remove(currentNote);
+        				}
                 		
-	                	if (currentNote.text.length() == 0)
-	                		currentNote.position = e.getPoint();
-	                	else {
-	                		currentNote = new PhotoNote(e.getPoint());
+                		if (selectedNote == null) {
+                			currentNote = new PhotoNote(e.getPoint());
+                    		currentNote.position.x -= imagePosition.x;
+                    		currentNote.position.y -= imagePosition.y;
 	                		notes.add(currentNote);
-	                	}
-                		currentNote.position.x -= imagePosition.x;
-                		currentNote.position.y -= imagePosition.y;
+                		}
+                		else {
+                			currentNote = selectedNote;
+                		}
                 	}
                 	repaint();
                 }
@@ -124,7 +133,7 @@ public class PhotoComponent extends JComponent {
 		addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
-            	if (isFlipped) {
+            	if (isFlipped && currentNote != null) {
             		if (e.getKeyChar() == KeyEvent.VK_BACK_SPACE && currentNote.text.length() > 0)
             			currentNote.text = currentNote.text.substring(0, currentNote.text.length() - 1);
             		else
@@ -135,6 +144,16 @@ public class PhotoComponent extends JComponent {
 
 			@Override
 			public void keyPressed(KeyEvent e) {
+            	if (isFlipped && currentNote != null) {
+	        		if (e.getModifiers() == 4 && e.getKeyCode() == 61) {
+	        			currentNote.IncreaseSize();
+	            		repaint();
+	        		}
+	        		else if (e.getModifiers() == 4 && e.getKeyCode() == 45) {
+	        			currentNote.DecreaseSize();
+	            		repaint();
+	        		}
+            	}
 			}
 
 			@Override
@@ -175,14 +194,13 @@ public class PhotoComponent extends JComponent {
 	}
 	
 	private void drawNotes(Graphics2D g) {
-		FontMetrics metrics = g.getFontMetrics(font);
 
 		Dimension size = getImageSize();
 		Point position = getImagePosition();
 
-		g.setFont(font);
-		
 		for (PhotoNote note : notes) {
+			FontMetrics metrics = g.getFontMetrics(note.getFont());
+			g.setFont(note.getFont());
 			String text = note.text.trim();
 			String restText = "";
 			int x = note.position.x;
@@ -239,12 +257,18 @@ public class PhotoComponent extends JComponent {
 		for (PhotoStroke stroke : strokes) {
 			g.setPaintMode();
 			if (stroke.points.size() > 1)
-				for (int i = 1; i < stroke.points.size(); i++)
+				for (int i = 1; i < stroke.points.size(); i++) {
+					double d = stroke.points.get(i - 1).distance(stroke.points.get(i));
+					double s = 3 - d * 0.05;
+					if (s < 0.2)
+						s = 0.2;
+					g.setStroke(new BasicStroke((float) s));
 					g.drawLine(
 						(int) stroke.points.get(i - 1).getX() + position.x,
 						(int) stroke.points.get(i - 1).getY() + position.y,
 						(int) stroke.points.get(i).getX() + position.x,
 						(int) stroke.points.get(i).getY() + position.y);
+				}
 		}
 	}
 	
@@ -267,6 +291,8 @@ public class PhotoComponent extends JComponent {
 	private void drawCorners(Graphics2D g) {
 		Dimension size = getImageSize();
 		Point position = getImagePosition();
+
+		g.setStroke(new BasicStroke(1));
 		
 		g.setColor(Color.black);
 		int d = 40;
