@@ -1,4 +1,4 @@
-package PhotoViewerPackage;
+package PhotoComponent;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -7,7 +7,6 @@ import java.awt.Point;
 public class PhotoNote {
 	public String text = "";
 	public Point position = new Point(0, 0);
-	public Dimension size = new Dimension(0, 0);
 	private Integer fontSize = 12;
 
 	public void IncreaseSize() {

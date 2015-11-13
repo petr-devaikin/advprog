@@ -2,18 +2,15 @@ package PhotoViewerPackage;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JToggleButton;
+
+import PhotoComponent.JPhotoComponent;
 
 public class MainPanel extends JPanel {
 	JScrollPane scrollPane;
@@ -31,7 +28,8 @@ public class MainPanel extends JPanel {
 			File file = new File(src);
 			Image image = ImageIO.read(file);
 
-			PhotoComponent photo = new PhotoComponent(image);
+			JPhotoComponent photo = new JPhotoComponent(image);
+			
 			scrollPane.setViewportView(photo);
 			scrollPane.revalidate();
 			return true;

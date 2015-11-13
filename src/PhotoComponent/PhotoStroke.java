@@ -1,4 +1,4 @@
-package PhotoViewerPackage;
+package PhotoComponent;
 
 import java.awt.Point;
 import java.util.ArrayList;
