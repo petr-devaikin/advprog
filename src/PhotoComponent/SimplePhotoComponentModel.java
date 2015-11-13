@@ -4,8 +4,7 @@ import java.awt.Image;
 import java.awt.Point;
 import java.util.ArrayList;
 
-public class SimplePhotoComponentModel {
-	
+public class SimplePhotoComponentModel implements PhotoComponentModel {
 	private ArrayList<ChangeListener> listeners = new ArrayList<ChangeListener>();
 	
 	private boolean flipped = false;
